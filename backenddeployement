@@ -1,0 +1,122 @@
+# Elite Glam Backend Deployment Guide for Render
+
+## Pre-Deployment Checklist
+
+### 1. Code Preparation
+- [ ] Ensure all code is committed to your Git repository
+- [ ] Test the application locally (`npm run dev`)
+- [ ] Update all dependencies (`npm update`)
+- [ ] Set `NODE_ENV=production` in your environment variables
+- [ ] Remove or disable development middleware (like morgan in production)
+- [ ] Update CORS settings to only allow your frontend domain
+
+### 2. Environment Variables
+Create a `.env.production` file with:
+```
+NODE_ENV=production
+PORT=10000
+MONGODB_URI=your_production_mongodb_uri
+JWT_SECRET=your_secure_jwt_secret
+JWT_EXPIRES_IN=30d
+```
+
+### 3. Database Setup
+- [ ] Create a production MongoDB database (MongoDB Atlas recommended)
+- [ ] Whitelist Render's IP addresses in MongoDB Atlas:
+  - 0.0.0.0/0 (temporary for testing, restrict later)
+  - Or specific Render IPs from: https://render.com/docs/web-services-ip-addresses
+- [ ] Test the connection with your production database
+
+## Render Deployment Steps
+
+### 1. Create a New Web Service
+1. Go to Render Dashboard
+2. Click "New +" → "Web Service"
+3. Connect your GitHub/GitLab repository
+
+### 2. Configure Service Settings
+- **Name**: elite-glam-backend
+- **Region**: Choose the closest to your users
+- **Branch**: main (or your production branch)
+- **Root Directory**: elite-glam-backend/
+- **Build Command**: `npm install && npm run build`
+- **Start Command**: `node server.js`
+- **Instance Type**: Free or Standard (Free has limitations)
+- **Auto-Deploy**: Enable for automatic deployments
+
+### 3. Environment Variables
+Add these environment variables in Render's dashboard:
+```
+NODE_ENV=production
+PORT=10000
+MONGODB_URI=your_production_mongodb_uri
+JWT_SECRET=your_secure_jwt_secret
+JWT_EXPIRES_IN=30d
+```
+
+### 4. Advanced Settings
+- **Health Check Path**: `/health`
+- **Build Cache**: Enable
+- **Auto-Deploy**: Enable for your main branch
+
+### 5. Deploy
+- [ ] Click "Create Web Service"
+- [ ] Monitor the build logs for errors
+- [ ] Verify the service is running (green status)
+
+## Post-Deployment
+
+### 1. Verify Deployment
+- [ ] Test API endpoints using Postman or curl
+- [ ] Verify `/health` endpoint returns 200
+- [ ] Test authentication flow
+
+### 2. Set Up Custom Domain (Optional)
+1. Go to your service settings
+2. Click "Add Custom Domain"
+3. Follow DNS configuration instructions
+
+### 3. Monitoring and Logs
+- [ ] Set up log draining if needed
+- [ ] Configure alerts for errors
+- [ ] Monitor resource usage
+
+## Common Issues and Solutions
+
+### 1. Build Failures
+- Check Node.js version compatibility
+- Verify all dependencies are in package.json
+- Check build logs for specific errors
+
+### 2. Connection Issues
+- Verify MongoDB connection string
+- Check firewall rules and IP whitelisting
+- Ensure the database is accessible from Render's IPs
+
+### 3. Environment Variables
+- Double-check all variables are set correctly
+- Ensure no trailing spaces in values
+- Restart the service after changing variables
+
+## Maintenance
+- [ ] Set up automated backups for your database
+- [ ] Monitor resource usage and scale as needed
+- [ ] Keep dependencies updated
+- [ ] Regularly rotate secrets and API keys
+
+## Rollback Procedure
+1. Go to the "Deploys" tab
+2. Find a previous working version
+3. Click "Rollback to this deploy"
+
+## Security Best Practices
+- [ ] Use environment variables for all secrets
+- [ ] Enable 2FA on your Render account
+- [ ] Regularly audit dependencies for vulnerabilities
+- [ ] Set up proper CORS restrictions
+- [ ] Use HTTPS for all endpoints
+
+## Support
+- Render Documentation: https://render.com/docs
+- Status Page: https://status.render.com/
+- Support: support@render.com
