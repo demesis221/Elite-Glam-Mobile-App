@@ -17,11 +17,74 @@ const PORT = process.env.PORT || 3001;
 connectDB();
 
 // Middleware
-app.use(cors({
-  origin: '*', // Allow all origins for development
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization']
-}));
+// Security headers middleware
+app.use((req, res, next) => {
+  // Remove X-Powered-By header
+  res.removeHeader('X-Powered-By');
+  
+  // Set security headers
+  res.header('X-Content-Type-Options', 'nosniff');
+  res.header('X-Frame-Options', 'DENY');
+  res.header('X-XSS-Protection', '1; mode=block');
+  res.header('Referrer-Policy', 'no-referrer');
+  res.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  
+  // Log incoming requests
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - ${req.ip}`);
+  
+  next();
+});
+
+// CORS Configuration
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, etc.)
+    if (!origin) return callback(null, true);
+    
+    // Development environment - allow common development origins
+    if (process.env.NODE_ENV === 'development') {
+      const allowedOrigins = [
+        /^http:\/\/localhost(:\d+)?$/,  // Localhost with any port
+        /^http:\/\/127\.0\.0\.1(:\d+)?$/,  // Localhost IP
+        /^http:\/\/10\.0\.2\.2(:\d+)?$/,  // Android emulator
+        /^exp:\/\//,  // Expo URLs (Android/iOS)
+        /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/  // Local network
+      ];
+      
+      const isAllowed = allowedOrigins.some(regex => regex.test(origin));
+      return callback(isAllowed ? null : new Error('Not allowed by CORS'), isAllowed);
+    }
+    
+    // Production environment - only allow specific domains
+    const allowedOrigins = [
+      // Add your production domains here, e.g.:
+      // 'https://yourapp.com',
+      // 'https://www.yourapp.com'
+    ];
+    
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    
+    console.warn(`[CORS] Blocked request from: ${origin}`);
+    return callback(new Error('Not allowed by CORS'));
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: [
+    'Content-Type',
+    'Authorization',
+    'X-Requested-With',
+    'Accept',
+    'Origin'
+  ],
+  credentials: true,
+  maxAge: 86400, // 24 hours
+  optionsSuccessStatus: 200
+};
+
+// Apply CORS with preflight
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions)); // Enable preflight for all routes
 // Allow larger JSON payloads (e.g., base64 images)
 app.use(express.json({ limit: '2mb' }));
 app.use(express.urlencoded({ extended: true, limit: '2mb' }));
@@ -61,6 +124,39 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const server = app.listen(PORT, '0.0.0.0', () => {
+  const host = server.address().address;
+  const port = server.address().port;
+  console.log(`🚀 Server running at http://${host}:${port}`);
+  console.log(`🌐 Accessible on your local network at: http://${require('ip').address()}:${port}`);
+  console.log('🛡️  CORS enabled for all origins in development');
+  console.log('📡 Available endpoints:');
+  console.log(`   - GET  /health          - Health check`);
+  console.log(`   - GET  /products        - Get all products`);
+  console.log(`   - GET  /products/:id    - Get product by ID`);
+  console.log(`   - POST /products        - Create new product (protected)`);
+  console.log(`   - PUT  /products/:id    - Update product (protected)`);
+  console.log(`   - DEL  /products/:id    - Delete product (protected)`);
+});
+
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise, 'reason:', err);
+  // Close server & exit process
+  server.close(() => process.exit(1));
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err);
+  // Close server & exit process
+  server.close(() => process.exit(1));
+});
+
+// Handle SIGTERM (for Docker)
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received. Shutting down gracefully');
+  server.close(() => {
+    console.log('Process terminated');
+  });
 }); 
