@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const morgan = require('morgan');
 const connectDB = require('./config/db');
 require('dotenv').config();
 
@@ -16,21 +18,23 @@ const PORT = process.env.PORT || 3001;
 // Connect to MongoDB
 connectDB();
 
-// Middleware
-// Security headers middleware
+// Security middleware
+app.use(helmet());
+
+// Logging middleware
+app.use(morgan('dev'));
+
+// Custom middleware for additional security headers
 app.use((req, res, next) => {
-  // Remove X-Powered-By header
+  // Remove X-Powered-By header (redundant with helmet but kept for reference)
   res.removeHeader('X-Powered-By');
   
-  // Set security headers
+  // Set security headers (some may be redundant with helmet)
   res.header('X-Content-Type-Options', 'nosniff');
   res.header('X-Frame-Options', 'DENY');
   res.header('X-XSS-Protection', '1; mode=block');
   res.header('Referrer-Policy', 'no-referrer');
   res.header('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
-  
-  // Log incoming requests
-  console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} - ${req.ip}`);
   
   next();
 });
