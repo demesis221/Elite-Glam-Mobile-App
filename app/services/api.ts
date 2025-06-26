@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 // Base URL for your API
-const API_URL = 'https://elite-glam-mobile-app-7qv7.onrender.com'; // Production backend URL
+const API_URL = process.env.EXPO_PUBLIC_API_URL || 'https://elite-glam-mobile-app-7qv7.onrender.com'; // Use environment variable or fallback to production URL
 
 // Create axios instance
 export const api = axios.create({

@@ -6,7 +6,11 @@ const {
 } = require('../controllers/rating.controller');
 const { protect } = require('../middleware/auth.middleware');
 
-router.route('/').post(protect, createRating);
-router.route('/:productId').get(getProductRatings);
+// These routes will be mounted at /api/ratings
+router.route('/')
+  .post(protect, createRating);
+
+router.route('/:productId')
+  .get(getProductRatings);
 
 module.exports = router;

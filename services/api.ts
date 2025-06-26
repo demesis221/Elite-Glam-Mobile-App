@@ -1,13 +1,13 @@
-import { API_URL, getBestApiUrl } from '@/config/api.config';
+import { API_URL } from '@/config/api.config';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Debug log for API URL configuration
 console.log('API Configuration - Initial API_URL:', API_URL);
 console.log('Environment API URL:', process.env.EXPO_PUBLIC_API_URL || 'Not set in environment');
 
-// Create a singleton config object to hold the dynamic URL
+// Create a singleton config object with the Render URL
 const ApiConfig = {
-  BASE_URL: 'http://192.168.101.3:3001', // Hardcoded for reliability
+  BASE_URL: process.env.EXPO_PUBLIC_API_URL || 'https://elite-glam-mobile-app-7qv7.onrender.com',
 };
 
 // Log the final API URL being used
@@ -16,26 +16,12 @@ console.log('Final API URL:', ApiConfig.BASE_URL);
 // Function to initialize the API with the best available URL
 export const initializeApi = async () => {
   try {
-    const bestUrl = await getBestApiUrl();
-    ApiConfig.BASE_URL = bestUrl;
-    console.log('API initialized with URL:', ApiConfig.BASE_URL);
-
-    // Verify the API is actually reachable by making a health check
-    try {
-      const healthPromise = fetch(`${ApiConfig.BASE_URL}/health`, { method: 'GET' });
-      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Health check timed out')), 3000));
-      const response = await Promise.race([healthPromise, timeoutPromise]) as Response;
-
-      if (response.ok) {
-        console.log('API health check successful');
-      } else {
-        console.warn('API health check failed with status:', response.status);
-      }
-    } catch (healthError) {
-      console.warn('API health check failed:', healthError);
-    }
+    // If you need to check multiple URLs in the future, you can do it here
+    console.log('Initializing API with URL:', ApiConfig.BASE_URL);
+    return ApiConfig.BASE_URL;
   } catch (error) {
-    console.error('Failed to initialize API URL, using default:', ApiConfig.BASE_URL);
+    console.error('Error initializing API:', error);
+    return ApiConfig.BASE_URL; // Fallback to default
   }
 };
 

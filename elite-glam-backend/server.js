@@ -124,16 +124,16 @@ const notificationRoutes = require('./routes/notification.routes');
 // Use routes with debug logging
 console.log('Mounting routes...');
 try {
-  app.use('/auth', authRoutes);
-  console.log('✅ Auth routes mounted at /auth');
+  app.use('/api/auth', authRoutes);
+  console.log('✅ Auth routes mounted at /api/auth');
 } catch (error) {
   console.error('❌ Failed to mount auth routes:', error);
 }
 
-app.use('/products', productRoutes);
-app.use('/bookings', bookingRoutes);
-app.use('/ratings', ratingRoutes);
-app.use('/notifications', notificationRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/bookings', bookingRoutes);
+app.use('/api/ratings', ratingRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Temporary test route for debugging backend logging
 app.use('/test-log', (req, res) => {
@@ -159,11 +159,11 @@ const server = app.listen(PORT, '0.0.0.0', () => {
   console.log('🛡️  CORS enabled for all origins in development');
   console.log('📡 Available endpoints:');
   console.log(`   - GET  /health          - Health check`);
-  console.log(`   - GET  /products        - Get all products`);
-  console.log(`   - GET  /products/:id    - Get product by ID`);
-  console.log(`   - POST /products        - Create new product (protected)`);
-  console.log(`   - PUT  /products/:id    - Update product (protected)`);
-  console.log(`   - DEL  /products/:id    - Delete product (protected)`);
+  console.log(`   - GET  /api/products        - Get all products`);
+  console.log(`   - GET  /api/products/:id    - Get product by ID`);
+  console.log(`   - POST /api/products        - Create new product (protected)`);
+  console.log(`   - PUT  /api/products/:id    - Update product (protected)`);
+  console.log(`   - DEL  /api/products/:id    - Delete product (protected)`);
 });
 
 // Handle unhandled promise rejections
