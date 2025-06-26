@@ -31,7 +31,7 @@ export const bookingService = {
     const params: any = { page, limit };
     if (status) params.status = status;
     if (search) params.search = search;
-    const response = await api.get('/bookings/seller', { params });
+    const response = await api.get('/api/bookings/seller', { params });
     return response.data;
   },
 
@@ -39,23 +39,23 @@ export const bookingService = {
     const params: any = { page, limit };
     if (status) params.status = status;
     if (search) params.search = search;
-    const response = await api.get('/bookings', { params });
+    const response = await api.get('/api/bookings', { params });
     return response.data;
   },
 
   async createBooking(payload: Partial<Booking>) {
-    const response = await api.post('/bookings', payload);
+    const response = await api.post('/api/bookings', payload);
     return response.data;
   },
 
   async updateBookingStatus(bookingId: string, status: BookingStatus, message?: string) {
     // @ts-ignore
-    const response = await api.patch(`/bookings/${bookingId}/status`, { status, message });
+    const response = await api.patch(`/api/bookings/${bookingId}/status`, { status, message });
     return response.data;
   },
 
   async getBookingById(id: string): Promise<Booking> {
-    const response = await api.get(`/bookings/${id}`);
+    const response = await api.get(`/api/bookings/${id}`);
     return response.data;
   },
 };

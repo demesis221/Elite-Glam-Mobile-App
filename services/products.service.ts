@@ -42,9 +42,9 @@ export interface Product {
 
 export const productsService = {
   async getProducts(): Promise<Product[]> {
-    console.log('[productsService.getProducts] Fetching /products');
+    console.log('[productsService.getProducts] Fetching /api/products');
     try {
-      const response = await api.get('/products');
+      const response = await api.get('/api/products');
       console.log('[productsService.getProducts] Response:', response);
       return response.data;
     } catch (error) {
@@ -53,9 +53,9 @@ export const productsService = {
   },
 
   async getAllProducts(userId?: string, page: number = 1, limit: number = 4): Promise<Product[]> {
-    console.log('[productsService.getAllProducts] Fetching /products/all', { userId, page, limit });
+    console.log('[productsService.getAllProducts] Fetching /api/products/all', { userId, page, limit });
     try {
-      const response = await api.get('/products/all', { params: { userId, page, limit } });
+      const response = await api.get('/api/products/all', { params: { userId, page, limit } });
       console.log('[productsService.getAllProducts] Response:', response);
       return response.data;
     } catch (error) {
@@ -64,9 +64,9 @@ export const productsService = {
   },
 
   async getProductsByPage(page: number, limit: number, category?: string): Promise<Product[]> {
-    console.log('[productsService.getProductsByPage] Fetching /products', { page, limit, category });
+    console.log('[productsService.getProductsByPage] Fetching /api/products', { page, limit, category });
     try {
-      const response = await api.get('/products', { params: { page, limit, category } });
+      const response = await api.get('/api/products', { params: { page, limit, category } });
       console.log('[productsService.getProductsByPage] Response:', response);
       return response.data;
     } catch (error) {
@@ -75,9 +75,9 @@ export const productsService = {
   },
 
   async getProductById(id: string): Promise<Product | null> {
-    console.log('[productsService.getProductById] Fetching /products/' + id);
+    console.log('[productsService.getProductById] Fetching /api/products/' + id);
     try {
-      const response = await api.get(`/products/${id}`);
+      const response = await api.get(`/api/products/${id}`);
       console.log('[productsService.getProductById] Response:', response);
       return response.data;
     } catch (error) {
@@ -86,9 +86,9 @@ export const productsService = {
   },
 
   async getUserProducts() {
-    console.log('[productsService.getUserProducts] Fetching /products/my-products');
+    console.log('[productsService.getUserProducts] Fetching /api/products/my-products');
     try {
-      const response = await api.get('/products/my-products');
+      const response = await api.get('/api/products/my-products');
       console.log('[productsService.getUserProducts] Response:', response);
       return response.data;
     } catch (error) {
@@ -98,7 +98,7 @@ export const productsService = {
 
   async getMyProducts(userId: string) {
     try {
-      const response = await api.get(`/products/user/${userId}`);
+      const response = await api.get(`/api/products/user/${userId}`);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -107,7 +107,7 @@ export const productsService = {
 
   async getProductsByCategory(category: string) {
     try {
-      const response = await api.get(`/products/category/${category}`);
+      const response = await api.get(`/api/products/category/${category}`);
       return response.data;
     } catch (error) {
       throw new Error(handleApiError(error));
@@ -145,7 +145,7 @@ export const productsService = {
 
   async searchProducts(query: string): Promise<Product[]> {
     try {
-      const response = await api.get('/products/search', {
+      const response = await api.get('/api/products/search', {
         params: { query }
       });
       return response.data;
