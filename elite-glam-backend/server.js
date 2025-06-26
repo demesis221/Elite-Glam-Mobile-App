@@ -109,8 +109,8 @@ const notificationRoutes = require('./routes/notification.routes');
 app.use('/auth', authRoutes);
 app.use('/products', productRoutes);
 app.use('/bookings', bookingRoutes);
-app.use('/api/ratings', ratingRoutes);
-app.use('/api/notifications', notificationRoutes);
+app.use('/ratings', ratingRoutes);
+app.use('/notifications', notificationRoutes);
 
 // Temporary test route for debugging backend logging
 app.use('/test-log', (req, res) => {
