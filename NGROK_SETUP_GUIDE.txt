@@ -1,0 +1,154 @@
+==========================================
+         NGROK SETUP GUIDE
+==========================================
+
+1. SIGN UP FOR NGROK
+   - Go to: https://dashboard.ngrok.com/signup
+   - Create a free account
+   - Verify your email
+
+2. INSTALL NGROK
+   Run in terminal:
+npm install -g ngrok
+
+
+3. CONNECT YOUR ACCOUNT
+   - Log in to ngrok dashboard
+   - Go to: https://dashboard.ngrok.com/get-started/your-authtoken
+   - Copy your authtoken
+   - Run in terminal:
+     ```
+     ngrok config add-authtoken YOUR_AUTH_TOKEN
+     ```
+
+4. START NGROK TUNNEL
+   - Make sure your backend is running on port 3001
+   - Run in terminal:
+     ```
+     ngrok http 3001
+     ```
+   - Copy the forwarding URL (looks like https://abc123.ngrok.io)
+
+5. UPDATE API CLIENT
+   - Open: apiClient.ts
+   - Update the development URL:
+     ```typescript
+     const API_URL = {
+       development: 'https://YOUR_NGROK_URL.ngrok.io/api',
+       production: '[https://elite-glam-api.herokuapp.com/api'](https://elite-glam-api.herokuapp.com/api'),
+     };
+     ```
+
+6. TEST THE CONNECTION
+   - Visit in browser: https://YOUR_NGROK_URL.ngrok.io/api
+   - Should show your API response
+
+TROUBLESHOOTING:
+- If you get "Invalid Host header", add:
+--host-header=rewrite
+
+  to your ngrok command
+
+- For persistent URLs, upgrade to ngro==========================================
+         NGROK SETUP GUIDE
+==========================================
+
+1. SIGN UP FOR NGROK
+   - Go to: https://dashboard.ngrok.com/signup
+   - Create a free account
+   - Verify your email
+
+2. INSTALL NGROK
+   Run in terminal:
+npm install -g ngrok
+
+
+3. CONNECT YOUR ACCOUNT
+   - Log in to ngrok dashboard
+   - Go to: https://dashboard.ngrok.com/get-started/your-authtoken
+   - Copy your authtoken
+   - Run in terminal:
+     ```
+     ngrok config add-authtoken YOUR_AUTH_TOKEN
+     ```
+
+4. START NGROK TUNNEL
+   - Make sure your backend is running on port 3001
+   - Run in terminal:
+     ```
+     ngrok http 3001
+     ```
+   - Copy the forwarding URL (looks like https://abc123.ngrok.io)
+
+5. UPDATE API CLIENT
+   - Open: apiClient.ts
+   - Update the development URL:
+     ```typescript
+     const API_URL = {
+       development: 'https://YOUR_NGROK_URL.ngrok.io/api',
+       production: '[https://elite-glam-api.herokuapp.com/api'](https://elite-glam-api.herokuapp.com/api'),
+     };
+     ```
+
+6. TEST THE CONNECTION
+   - Visit in browser: https://YOUR_NGROK_URL.ngrok.io/api
+   - Should show your API response
+
+TROUBLESHOOTING:
+- If you get "Invalid Host header", add:
+--host-header=rewrite
+
+  to your ngrok command
+
+- For persistent URLs, upgrade to ngro==========================================
+         NGROK SETUP GUIDE
+==========================================
+
+1. SIGN UP FOR NGROK
+   - Go to: https://dashboard.ngrok.com/signup
+   - Create a free account
+   - Verify your email
+
+2. INSTALL NGROK
+   Run in terminal:
+npm install -g ngrok
+
+
+3. CONNECT YOUR ACCOUNT
+   - Log in to ngrok dashboard
+   - Go to: https://dashboard.ngrok.com/get-started/your-authtoken
+   - Copy your authtoken
+   - Run in terminal:
+     ```
+     ngrok config add-authtoken YOUR_AUTH_TOKEN
+     ```
+
+4. START NGROK TUNNEL
+   - Make sure your backend is running on port 3001
+   - Run in terminal:
+     ```
+     ngrok http 3001
+     ```
+   - Copy the forwarding URL (looks like https://abc123.ngrok.io)
+
+5. UPDATE API CLIENT
+   - Open: apiClient.ts
+   - Update the development URL:
+     ```typescript
+     const API_URL = {
+       development: 'https://YOUR_NGROK_URL.ngrok.io/api',
+       production: '[https://elite-glam-api.herokuapp.com/api'](https://elite-glam-api.herokuapp.com/api'),
+     };
+     ```
+
+6. TEST THE CONNECTION
+   - Visit in browser: https://YOUR_NGROK_URL.ngrok.io/api
+   - Should show your API response
+
+TROUBLESHOOTING:
+- If you get "Invalid Host header", add:
+--host-header=rewrite
+
+  to your ngrok command
+
+- For persistent URLs, upgrade to ngrok paid plan
