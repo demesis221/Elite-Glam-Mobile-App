@@ -98,15 +98,33 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is running' });
 });
 
-// Import routes
-const authRoutes = require('./routes/auth.routes');
+// Import routes with debug logging
+console.log('Loading routes...');
+
+// Import each route with error handling
+let authRoutes;
+try {
+  authRoutes = require('./routes/auth.routes');
+  console.log('✅ Auth routes loaded successfully');
+} catch (error) {
+  console.error('❌ Failed to load auth routes:', error);
+}
+
+// Import other routes
 const productRoutes = require('./routes/product.routes');
 const bookingRoutes = require('./routes/booking.routes');
 const ratingRoutes = require('./routes/rating.routes');
 const notificationRoutes = require('./routes/notification.routes');
 
-// Use routes
-app.use('/auth', authRoutes);
+// Use routes with debug logging
+console.log('Mounting routes...');
+try {
+  app.use('/auth', authRoutes);
+  console.log('✅ Auth routes mounted at /auth');
+} catch (error) {
+  console.error('❌ Failed to mount auth routes:', error);
+}
+
 app.use('/products', productRoutes);
 app.use('/bookings', bookingRoutes);
 app.use('/ratings', ratingRoutes);
