@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as SecureStore from 'expo-secure-store';
 
 // Base URL for your API
-const API_URL = 'http://192.168.101.3:3001'; // Using local network IP for mobile device access
+const API_URL = 'https://elite-glam-mobile-app-7qv7.onrender.com'; // Production backend URL
 
 // Create axios instance
 export const api = axios.create({

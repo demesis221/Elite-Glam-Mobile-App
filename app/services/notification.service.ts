@@ -13,7 +13,7 @@ export interface Notification {
 
 export const notificationService = {
   async getAll(token: string): Promise<Notification[]> {
-    const res = await api.get('/api/notifications', {
+    const res = await api.get('/notifications', {
       headers: { Authorization: `Bearer ${token}` },
     });
     return res.data;
@@ -21,7 +21,7 @@ export const notificationService = {
 
   async markAllAsRead(token: string) {
     await api.post(
-      '/api/notifications/mark-read',
+      '/notifications/mark-read',
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
