@@ -75,6 +75,7 @@ const corsOptions = {
     }
     
     console.warn(`[CORS] Blocked request from: ${origin}`);
+    console.log('Allowed origins:', allowedOrigins); // Debug log
     return callback(new Error('Not allowed by CORS'));
   },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
