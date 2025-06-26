@@ -39,6 +39,10 @@ app.use((req, res, next) => {
   next();
 });
 
+// Body parser middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 // CORS Configuration
 const corsOptions = {
   origin: (origin, callback) => {

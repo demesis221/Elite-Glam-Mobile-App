@@ -86,6 +86,8 @@ exports.register = async (req, res) => {
 // Login user
 // POST /auth/login
 exports.login = async (req, res) => {
+  console.log('Login endpoint hit');
+  console.log('Request body:', req.body);
   try {
     const { email, password } = req.body;
 
