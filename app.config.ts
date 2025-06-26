@@ -29,9 +29,10 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     favicon: './assets/images/favicon.png',
     bundler: 'metro'
   },
+  owner: 'demesis200221',
   extra: {
     eas: {
-      projectId: 'c16984fd-9849-44e5-8e63-7b93671c978e'
+      projectId: '976fa53c-51c8-4a53-9e3d-9ffa81544d0c'
     }
   },
   plugins: [
