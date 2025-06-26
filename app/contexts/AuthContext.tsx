@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { router } from 'expo-router';
-import { authService, AuthResponse } from '../services/auth.service';
+import { authService, AuthResponse } from '../../services/auth.service';
 import * as SecureStore from 'expo-secure-store';
 
 interface AuthContextType {

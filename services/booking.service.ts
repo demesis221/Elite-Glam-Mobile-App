@@ -1,112 +1,61 @@
-import { api } from './api';
+import api, { handleApiError } from './api';
+// @ts-ignore
+
 
 export type BookingStatus = 'pending' | 'confirmed' | 'rejected' | 'cancelled' | 'completed';
 
-export interface Rating {
-  rating: number;
-  comment?: string;
-}
-
 export interface Booking {
+  _id?: string;
+  id?: string;
   bookingId?: string;
-  id: string;
-  customerName: string;
-  serviceName: string;
+  customerName?: string;
+  serviceName?: string;
   productId?: string;
-  date: string;
-  time: string;
-  status: BookingStatus;
-  price: number;
-  notes?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  uid: string;        // ID of the customer who made the booking
-  ownerUid: string;   // ID of the seller who owns the product
-  ownerUsername: string;  // Username of the seller
+  date?: string;
+  time?: string;
+  price?: number;
+  ownerUid?: string;
+  ownerUsername?: string;
   sellerLocation?: string;
   productImage?: string;
   eventTimePeriod?: string;
-  eventType?: string;
-  fittingTime?: string;
-  fittingTimePeriod?: string;
-  eventLocation?: string;
-  rating?: Rating;
-  rejectionMessage?: string;
-  includeMakeupService?: boolean;
-  makeupPrice?: number;
-  makeupDuration?: number;
+  status: BookingStatus;
+  createdAt?: string;
+  updatedAt?: string;
+  [key: string]: any;
 }
 
+
 export const bookingService = {
-  async getSellerBookings(page: number, limit: number, status?: BookingStatus, searchQuery?: string): Promise<Booking[]> {
-    try {
-      const params = { page, limit, status: status || undefined, q: searchQuery || undefined };
-      const response = await api.get('/bookings/seller', { params });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching seller bookings:', error);
-      throw error;
-    }
+  async getSellerBookings(page = 1, limit = 100, status?: BookingStatus, search?: string): Promise<Booking[]> {
+    const params: any = { page, limit };
+    if (status) params.status = status;
+    if (search) params.search = search;
+    const response = await api.get('/bookings/seller', { params });
+    return response.data;
   },
 
-  async getMyBookings(page: number, limit: number, status?: BookingStatus, searchQuery?: string): Promise<Booking[]> {
-    try {
-      const params = { page, limit, status: status || undefined, q: searchQuery || undefined };
-      const response = await api.get('/bookings', { params });
-      return response.data;
-    } catch (error) {
-      console.error('Error fetching my bookings:', error);
-      throw error;
-    }
+  async getMyBookings(page = 1, limit = 100, status?: BookingStatus, search?: string): Promise<Booking[]> {
+    const params: any = { page, limit };
+    if (status) params.status = status;
+    if (search) params.search = search;
+    const response = await api.get('/bookings', { params });
+    return response.data;
+  },
+
+  async createBooking(payload: Partial<Booking>) {
+    const response = await api.post('/bookings', payload);
+    return response.data;
+  },
+
+  async updateBookingStatus(bookingId: string, status: BookingStatus, message?: string) {
+    // @ts-ignore
+    const response = await api.patch(`/bookings/${bookingId}/status`, { status, message });
+    return response.data;
   },
 
   async getBookingById(id: string): Promise<Booking> {
-    try {
-      const response = await api.get(`/bookings/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Error fetching booking ${id}:`, error);
-      throw error;
-    }
+    const response = await api.get(`/bookings/${id}`);
+    return response.data;
   },
-
-  async updateBookingStatus(bookingId: string, status: BookingStatus, message?: string): Promise<void> {
-    try {
-      const payload = { status, message };
-      await api.put(`/bookings/${bookingId}/status`, payload);
-      console.log(`Booking ${bookingId} status updated to ${status}`);
-    } catch (error) {
-      console.error('Error updating booking status:', error);
-      throw error;
-    }
-  },
-
-  async createBooking(bookingData: any): Promise<Booking> {
-    try {
-      const response = await api.post('/bookings', bookingData);
-      return response.data;
-    } catch (error) {
-      console.error('Error creating booking:', error);
-      throw error;
-    }
-  },
-
-  async cancelBooking(id: string): Promise<void> {
-    try {
-      await api.post(`/bookings/${id}/cancel`, {});
-    } catch (error) {
-      console.error('Error cancelling booking:', error);
-      throw error;
-    }
-  },
-
-  async submitRating(id: string, ratingData: Rating): Promise<Booking> {
-    try {
-      const response = await api.post(`/bookings/${id}/rate`, ratingData);
-      return response.data;
-    } catch (error) {
-      console.error('Error submitting rating:', error);
-      throw error;
-    }
-  }
-}; 
+};

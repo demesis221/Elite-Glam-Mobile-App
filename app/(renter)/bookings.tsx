@@ -13,7 +13,7 @@ import {
     TouchableOpacity,
     View
 } from 'react-native';
-import { Booking, BookingStatus, bookingService } from '@/services/booking.service';
+import { Booking, BookingStatus, bookingService } from '../../services/booking.service';
 
 const STATUS_COLORS = {
   pending: '#FFA500',
@@ -146,7 +146,7 @@ export default function CustomerBookingsScreen() {
     const handlePress = () => {
       if (!user) return;
 
-      const bookingId = booking.bookingId || booking.id;
+      const bookingId = booking.bookingId || (booking.id ?? booking._id ?? '');
 
       if (user.role === 'renter' || user.role === 'user') {
         router.push(`/(renter)/booking-details/${bookingId}`);
@@ -177,7 +177,7 @@ export default function CustomerBookingsScreen() {
               <View style={styles.titleContainer}>
                 <Text style={styles.serviceName} numberOfLines={2}>{booking.serviceName}</Text>
                 <View style={styles.priceContainer}>
-                  <Text style={styles.priceText}>₱{booking.price.toFixed(2)}</Text>
+                  <Text style={styles.priceText}>₱{(booking.price ?? 0).toFixed(2)}</Text>
                 </View>
               </View>
               <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[booking.status] }]}>
@@ -192,7 +192,7 @@ export default function CustomerBookingsScreen() {
               </View>
               <View style={styles.detailRow}>
                 <MaterialIcons name="event" size={16} color="#666" />
-                <Text style={styles.detailText}>{new Date(booking.date).toLocaleDateString()}</Text>
+                <Text style={styles.detailText}>{booking.date ? new Date(booking.date).toLocaleDateString() : ''}</Text>
               </View>
             </View>
           </View>
@@ -269,7 +269,7 @@ export default function CustomerBookingsScreen() {
       ) : (
         <FlatList
           data={filteredBookings}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id ?? item._id ?? ''}
           renderItem={renderBookingItem}
           contentContainerStyle={styles.listContent}
           refreshControl={

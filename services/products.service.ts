@@ -1,4 +1,4 @@
-import { api } from './api';
+import { api, handleApiError } from './api';
 
 export interface Product {
   id: string;
@@ -48,8 +48,7 @@ export const productsService = {
       console.log('[productsService.getProducts] Response:', response);
       return response.data;
     } catch (error) {
-      console.error('[productsService.getProducts] Error:', error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -60,8 +59,7 @@ export const productsService = {
       console.log('[productsService.getAllProducts] Response:', response);
       return response.data;
     } catch (error) {
-      console.error('[productsService.getAllProducts] Error:', error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -72,8 +70,7 @@ export const productsService = {
       console.log('[productsService.getProductsByPage] Response:', response);
       return response.data;
     } catch (error) {
-      console.error('[productsService.getProductsByPage] Error:', error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -83,9 +80,8 @@ export const productsService = {
       const response = await api.get(`/products/${id}`);
       console.log('[productsService.getProductById] Response:', response);
       return response.data;
-    } catch (error: any) {
-      console.error(`[productsService.getProductById] Error:`, error.message || error);
-      throw error;
+    } catch (error) {
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -96,8 +92,7 @@ export const productsService = {
       console.log('[productsService.getUserProducts] Response:', response);
       return response.data;
     } catch (error) {
-      console.error('[productsService.getUserProducts] Error:', error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -106,8 +101,7 @@ export const productsService = {
       const response = await api.get(`/products/user/${userId}`);
       return response.data;
     } catch (error) {
-      console.error(`Error fetching products for user ${userId}:`, error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -116,8 +110,7 @@ export const productsService = {
       const response = await api.get(`/products/category/${category}`);
       return response.data;
     } catch (error) {
-      console.error(`Error fetching products for category ${category}:`, error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -137,8 +130,16 @@ export const productsService = {
       const response = await api.post('/products', productData);
       return response.data;
     } catch (error) {
-      console.error('Error creating product:', error);
-      throw error;
+      throw new Error(handleApiError(error));
+    }
+  },
+
+  async updateProduct(id: string, productData: Partial<Product>): Promise<Product> {
+    try {
+      const response = await api.put(`/products/${id}`, productData);
+      return response.data;
+    } catch (error) {
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -149,8 +150,7 @@ export const productsService = {
       });
       return response.data;
     } catch (error) {
-      console.error(`Error searching products with query "${query}":`, error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
   
@@ -160,8 +160,7 @@ export const productsService = {
       console.log(`Product ${productId} successfully deleted`);
       return true;
     } catch (error) {
-      console.error(`Error deleting product ${productId}:`, error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 }; 

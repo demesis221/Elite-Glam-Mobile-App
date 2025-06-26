@@ -1,4 +1,4 @@
-import { Booking, BookingStatus, bookingService } from '@/services/booking.service';
+import { Booking, BookingStatus, bookingService } from '../../services/booking.service';
 import { MaterialIcons } from '@expo/vector-icons';
 import { router, useFocusEffect } from 'expo-router';
 import React, { useCallback, useState } from 'react';
@@ -119,7 +119,7 @@ export default function SellerBookingsScreen() {
 
     const matchesSearch = 
       (booking.serviceName?.toLowerCase().includes(searchQuery.toLowerCase()) || false) ||
-      (booking.id ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (booking.id ?? booking._id ?? '' ?? '').toLowerCase().includes(searchQuery.toLowerCase()) ||
       (booking.customerName?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
     
     const matchesStatus = selectedStatus ? booking.status === selectedStatus : true;
@@ -136,19 +136,19 @@ export default function SellerBookingsScreen() {
           style={[
             styles.filterButton,
             selectedStatus === status && styles.filterButtonActive,
-            { backgroundColor: selectedStatus === status ? STATUS_COLORS[status] : 'transparent' }
+            { backgroundColor: selectedStatus === status ? STATUS_COLORS[status as keyof typeof STATUS_COLORS] : 'transparent' }
           ]}
           onPress={() => setSelectedStatus(selectedStatus === status ? null : status)}
         >
           <MaterialIcons
-            name={STATUS_ICONS[status]}
+            name={STATUS_ICONS[status as keyof typeof STATUS_ICONS]}
             size={20}
-            color={selectedStatus === status ? 'white' : STATUS_COLORS[status]}
+            color={selectedStatus === status ? 'white' : STATUS_COLORS[status as keyof typeof STATUS_COLORS]}
           />
           <Text
             style={[
               styles.filterText,
-              { color: selectedStatus === status ? 'white' : STATUS_COLORS[status] }
+              { color: selectedStatus === status ? 'white' : STATUS_COLORS[status as keyof typeof STATUS_COLORS] }
             ]}
           >
             {status.charAt(0).toUpperCase() + status.slice(1)}
@@ -166,14 +166,14 @@ export default function SellerBookingsScreen() {
           <View style={styles.actionButtonsContainer}>
             <TouchableOpacity
               style={[styles.actionButton, styles.confirmButton]}
-              onPress={() => handleUpdateStatus(booking.id, 'confirmed')}
+              onPress={() => handleUpdateStatus(booking.id ?? booking._id ?? '', 'confirmed')}
             >
               <MaterialIcons name="check" size={16} color="#fff" />
               <Text style={styles.actionButtonText}>Confirm</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.actionButton, styles.rejectButton]}
-              onPress={() => handleUpdateStatus(booking.id, 'rejected')}
+              onPress={() => handleUpdateStatus(booking.id ?? booking._id ?? '', 'rejected')}
             >
               <MaterialIcons name="close" size={16} color="#fff" />
               <Text style={styles.actionButtonText}>Reject</Text>
@@ -185,7 +185,7 @@ export default function SellerBookingsScreen() {
           <View style={styles.actionButtonsContainer}>
             <TouchableOpacity
               style={[styles.actionButton, styles.completeButton]}
-              onPress={() => handleUpdateStatus(booking.id, 'completed')}
+              onPress={() => handleUpdateStatus(booking.id ?? booking._id ?? '', 'completed')}
             >
               <MaterialIcons name="done-all" size={16} color="#fff" />
               <Text style={styles.actionButtonText}>Mark Complete</Text>
@@ -203,7 +203,7 @@ export default function SellerBookingsScreen() {
   const handleLongPress = (booking: Booking) => {
     if (isDeletable(booking)) {
       setDeleteMode(true);
-      setSelectedBookings([booking.id]);
+      setSelectedBookings([booking.id ?? booking._id ?? '']);
     }
   };
 
@@ -223,7 +223,7 @@ export default function SellerBookingsScreen() {
         { text: 'Cancel', style: 'cancel' },
         {
           text: 'Delete', style: 'destructive', onPress: () => {
-            setBookings(prev => prev.filter(b => !selectedBookings.includes(b.id)));
+            setBookings(prev => prev.filter(b => !selectedBookings.includes(b.id ?? b._id ?? '')));
             setSelectedBookings([]);
             setDeleteMode(false);
           }
@@ -236,7 +236,7 @@ export default function SellerBookingsScreen() {
     <View style={styles.bookingCard}>
       <TouchableOpacity
         style={styles.bookingContent}
-        onPress={() => !deleteMode && router.push(`/(freelancer)/booking-details/${booking.id}`)}
+        onPress={() => !deleteMode && router.push(`/(freelancer)/booking-details/${booking.id ?? booking._id ?? ''}`)}
         onLongPress={() => handleLongPress(booking)}
       >
         <View style={styles.imageContainer}>
@@ -263,8 +263,8 @@ export default function SellerBookingsScreen() {
                 Customer: {booking.customerName || 'Unknown'}
               </Text>
             </View>
-            <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[booking.status] }]}>
-              <MaterialIcons name={STATUS_ICONS[booking.status]} size={14} color="white" />
+            <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[booking.status as keyof typeof STATUS_COLORS] }]}>
+              <MaterialIcons name={STATUS_ICONS[booking.status as keyof typeof STATUS_ICONS]} size={14} color="white" />
               <Text style={styles.statusText}>
                 {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
               </Text>
@@ -281,16 +281,16 @@ export default function SellerBookingsScreen() {
             <View style={styles.detailRow}>
               <MaterialIcons name="event" size={16} color="#666" />
               <Text style={styles.detailText}>
-                {new Date(booking.date).toLocaleDateString('en-US', {
+                {booking.date ? new Date(booking.date).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'short',
                   day: 'numeric'
-                })}
+                }) : ''}
               </Text>
             </View>
             <View style={styles.priceRow}>
               <MaterialIcons name="attach-money" size={16} color="#6B46C1" />
-              <Text style={styles.priceText}>₱{booking.price.toLocaleString()}</Text>
+              <Text style={styles.priceText}>₱{(booking.price ?? 0).toLocaleString()}</Text>
             </View>
           </View>
         </View>
@@ -300,8 +300,8 @@ export default function SellerBookingsScreen() {
       {deleteMode && isDeletable(booking) && (
         <View style={styles.checkboxContainer}>
           <CustomCheckBox
-            value={selectedBookings.includes(booking.id)}
-            onValueChange={() => handleSelectBooking(booking.id)}
+            value={selectedBookings.includes(booking.id ?? booking._id ?? '')}
+            onValueChange={() => handleSelectBooking(booking.id ?? booking._id ?? '')}
           />
         </View>
       )}
@@ -379,7 +379,7 @@ export default function SellerBookingsScreen() {
       ) : (
         <FlatList
           data={filteredBookings}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id ?? item._id ?? ''}
           renderItem={renderBookingItem}
           contentContainerStyle={[
             styles.listContent,

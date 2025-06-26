@@ -1,8 +1,3 @@
-import { AuthProvider } from '../contexts/AuthContext';
-import { CartProvider } from '../contexts/CartContext';
-import { NetworkProvider } from '../contexts/NetworkContext';
-import { NotificationProvider } from '../contexts/NotificationContext';
-import { ProductsProvider } from '../contexts/ProductsContext';
 import { useFonts } from 'expo-font';
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
@@ -10,6 +5,11 @@ import { useEffect, useState } from "react";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import LoadingScreen from '../components/LoadingScreen';
 import SyncStatusIndicator from '../components/SyncStatusIndicator';
+import { AuthProvider } from '../contexts/AuthContext';
+import { CartProvider } from '../contexts/CartContext';
+import { NetworkProvider } from '../contexts/NetworkContext';
+import { NotificationProvider } from '../contexts/NotificationContext';
+import { ProductsProvider } from '../contexts/ProductsContext';
 
 // Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();

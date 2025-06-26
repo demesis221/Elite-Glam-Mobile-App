@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Product, productService } from '../app/services/product.service';
+import { Product, productsService } from '../services/products.service';
 import { useAuth } from './AuthContext';
 
 interface ProductsContextType {
@@ -25,7 +25,7 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     try {
       setLoading(true);
       setError(null);
-      const data = await productService.getAllProducts();
+      const data = await productsService.getAllProducts();
       setProducts(data);
     } catch (err) {
       console.error('Failed to fetch products:', err);
@@ -45,7 +45,7 @@ export const ProductsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Filter featured products (example: top rated or newest)
   const featuredProducts = [...products]
-    .sort((a, b) => b.averageRating - a.averageRating)
+    .sort((a, b) => (b.averageRating ?? 0) - (a.averageRating ?? 0))
     .slice(0, 5);
 
   return (

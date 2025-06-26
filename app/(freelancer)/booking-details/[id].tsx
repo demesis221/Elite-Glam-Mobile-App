@@ -2,7 +2,7 @@ import { Stack, useLocalSearchParams, router } from 'expo-router';
 import React, { useEffect, useState, useCallback } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import { bookingService, Booking, BookingStatus } from '@/services/booking.service';
+import { bookingService, Booking, BookingStatus } from '../../../services/booking.service';
 
 const STATUS_COLORS = {
   pending: '#F59E0B',
@@ -66,7 +66,7 @@ export default function FreelancerBookingDetailsScreen() {
     if (!booking) return;
     setProcessing(newStatus);
     try {
-      await bookingService.updateBookingStatus(booking.id, newStatus, message);
+      await bookingService.updateBookingStatus(booking.id ?? booking._id ?? '', newStatus, message);
       Alert.alert('Success', `Booking has been ${newStatus}.`);
       fetchBooking();
     } catch (e: any) {
@@ -99,7 +99,7 @@ export default function FreelancerBookingDetailsScreen() {
 
   return (
     <ScrollView style={styles.container}>
-      <Stack.Screen options={{ title: `Booking #${booking.bookingId || booking.id}` }} />
+      <Stack.Screen options={{ title: `Booking #${booking.bookingId || (booking.id ?? booking._id ?? '')}` }} />
       <View style={styles.headerRow}>
         <Text style={styles.title}>Booking Details</Text>
         <View style={[styles.statusBadge, { backgroundColor: statusColor + '22' }]}> 

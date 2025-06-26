@@ -15,7 +15,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { Booking, bookingService, BookingStatus } from '@/services/booking.service';
+import { Booking, bookingService, BookingStatus } from '../../services/booking.service';
 
 const STATUS_COLORS = {
   pending: '#FFA500',
@@ -160,11 +160,11 @@ export default function BookingStatusScreen() {
               <Text style={styles.serviceName} numberOfLines={2}>{item.serviceName}</Text>
               <View style={styles.priceContainer}>
                 <MaterialIcons name="attach-money" size={14} color="#333" />
-                <Text style={styles.priceText}>{item.price.toFixed(2)}</Text>
+                <Text style={styles.priceText}>{(item.price ?? 0).toFixed(2)}</Text>
               </View>
             </View>
-            <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[item.status] }]}>
-              <MaterialIcons name={STATUS_ICONS[item.status]} size={14} color="#fff" />
+            <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[item.status as keyof typeof STATUS_COLORS] }]}>
+              <MaterialIcons name={STATUS_ICONS[item.status as keyof typeof STATUS_ICONS]} size={14} color="#fff" />
               <Text style={styles.statusText}>{item.status}</Text>
             </View>
           </View>
@@ -172,7 +172,7 @@ export default function BookingStatusScreen() {
           <View style={styles.detailsContainer}>
             <View style={styles.detailRow}>
               <MaterialIcons name="event" size={14} color="#666" />
-              <Text style={styles.detailText}>{new Date(item.date).toLocaleDateString()}</Text>
+              <Text style={styles.detailText}>{item.date ? new Date(item.date).toLocaleDateString() : ''}</Text>
             </View>
             <View style={styles.detailRow}>
               <MaterialIcons name="person" size={14} color="#666" />
@@ -183,7 +183,7 @@ export default function BookingStatusScreen() {
           {(item.status === 'confirmed' || item.status === 'pending') && (
             <TouchableOpacity
               style={styles.cancelButton}
-              onPress={() => handleCancelBooking(item.id)}
+              onPress={() => handleCancelBooking(item.id ?? item._id ?? '')}
             >
               <MaterialIcons name="cancel" size={14} color="#fff" />
               <Text style={styles.cancelButtonText}>Cancel</Text>
@@ -267,7 +267,7 @@ export default function BookingStatusScreen() {
               style={[styles.filterButton, selectedStatus === status && styles.filterButtonActive, { backgroundColor: selectedStatus === status ? '#6B4EFF' : '#fff' }]}
               onPress={() => handleFilterChange(status)}
             >
-              <MaterialIcons name={STATUS_ICONS[status]} size={14} color={selectedStatus === status ? '#fff' : '#666'} />
+              <MaterialIcons name={STATUS_ICONS[status as keyof typeof STATUS_ICONS]} size={14} color={selectedStatus === status ? '#fff' : '#666'} />
               <Text style={[styles.filterText, { color: selectedStatus === status ? '#fff' : '#333' }]}>{status}</Text>
             </TouchableOpacity>
           ))}
@@ -277,7 +277,7 @@ export default function BookingStatusScreen() {
       <FlatList
         data={bookings}
         renderItem={renderBookingItem}
-        keyExtractor={item => item.id}
+        keyExtractor={item => item.id ?? item._id ?? ''}
         contentContainerStyle={styles.listContainer}
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} colors={['#6B4EFF']} />}
         onEndReached={handleLoadMore}

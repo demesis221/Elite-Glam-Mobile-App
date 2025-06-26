@@ -56,7 +56,7 @@ const getNotificationImportance = (type: string): string => {
   return typeConfig ? typeConfig.importance : 'low';
 };
 
-import { notificationService } from '../app/services/notification.service';
+import { notificationService } from '../services/notification.service';
 
 export function NotificationProvider({ children }: { children: React.ReactNode }) {
   const { user, token } = useAuth();
@@ -284,7 +284,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   useEffect(() => {
     if (token) {
       notificationService.getAll(token)
-        .then((backendNotifications) => {
+        .then((backendNotifications: any) => {
           // Map backend notifications to frontend Notification type
           const mapped = backendNotifications.map((n: any) => ({
             id: Date.parse(n.createdAt) + Math.floor(Math.random() * 10000), // unique enough for list
@@ -300,7 +300,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
           }));
           setNotifications(mapped);
         })
-        .catch(err => console.error('Failed to fetch notifications', err));
+        .catch((err: any) => console.error('Failed to fetch notifications', err));
     } else {
       setNotifications([]);
     }

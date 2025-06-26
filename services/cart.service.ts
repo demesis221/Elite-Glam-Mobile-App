@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
+import { handleApiError } from './api';
 import { Product } from './products.service';
 
 // Flag to track if we've determined the cart API is unavailable
@@ -73,7 +74,7 @@ export const cartService = {
       return cartItem;
     } catch (error) {
       console.error('Error adding to cart:', error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -84,7 +85,7 @@ export const cartService = {
       return cartItemsJson ? JSON.parse(cartItemsJson) : [];
     } catch (error) {
       console.error('Error getting cart items:', error);
-      return [];
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -96,7 +97,7 @@ export const cartService = {
       await AsyncStorage.setItem('cartItems', JSON.stringify(cartItems));
     } catch (error) {
       console.error('Error removing from cart:', error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -115,7 +116,7 @@ export const cartService = {
       return cartItems[itemIndex];
     } catch (error) {
       console.error('Error updating cart item quantity:', error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -125,7 +126,7 @@ export const cartService = {
       await AsyncStorage.removeItem('cartItems');
     } catch (error) {
       console.error('Error clearing cart:', error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -136,7 +137,7 @@ export const cartService = {
       return cartItems.reduce((total, item) => total + item.quantity, 0);
     } catch (error) {
       console.error('Error getting cart count:', error);
-      return 0;
+      throw new Error(handleApiError(error));
     }
   },
 }; 

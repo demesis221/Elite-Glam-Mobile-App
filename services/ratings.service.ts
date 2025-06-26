@@ -1,6 +1,4 @@
-
-
-import { api } from './api';
+import { api, handleApiError } from './api';
 
 export interface Rating {
   id: string;
@@ -30,7 +28,7 @@ export const ratingsService = {
       return response.data;
     } catch (error) {
       console.error('Error creating rating:', error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -64,7 +62,7 @@ export const ratingsService = {
       return response.data;
     } catch (error) {
       console.error(`Error updating rating ${id}:`, error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   },
 
@@ -73,7 +71,7 @@ export const ratingsService = {
       await api.delete(`/ratings/${id}`);
     } catch (error) {
       console.error(`Error deleting rating ${id}:`, error);
-      throw error;
+      throw new Error(handleApiError(error));
     }
   }
 }; 

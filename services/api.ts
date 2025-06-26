@@ -5,36 +5,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 console.log('API Configuration - Initial API_URL:', API_URL);
 console.log('Environment API URL:', process.env.EXPO_PUBLIC_API_URL || 'Not set in environment');
 
-// Create a singleton config object with the Render URL
-const ApiConfig = {
-  BASE_URL: process.env.EXPO_PUBLIC_API_URL || 'https://elite-glam-mobile-app-7qv7.onrender.com',
-};
+// Use API_URL from config as the only source for the base URL
 
-// Log the final API URL being used
-console.log('Final API URL:', ApiConfig.BASE_URL);
-
-// Function to initialize the API with the best available URL
-export const initializeApi = async () => {
-  try {
-    // If you need to check multiple URLs in the future, you can do it here
-    console.log('Initializing API with URL:', ApiConfig.BASE_URL);
-    return ApiConfig.BASE_URL;
-  } catch (error) {
-    console.error('Error initializing API:', error);
-    return ApiConfig.BASE_URL; // Fallback to default
-  }
-};
-
-// Initialize on import
-initializeApi().catch(console.error);
-
-// Log the environment
+// Log the environment and API URL
 console.log('Environment:', __DEV__ ? 'Development' : 'Production');
-// Note: This log might show the default URL initially due to the async initialization
-console.log('Initial API URL:', ApiConfig.BASE_URL);
+console.log('API_URL from config:', API_URL);
+
+const ApiConfig = {
+  BASE_URL: API_URL,
+};
 
 // Create a simple axios-like API client
-export const api = {
+const api = {
   async get(endpoint: string, options = {}) {
     const { params } = options as any;
     const requestUrl = `${ApiConfig.BASE_URL}${endpoint}`;
@@ -45,10 +27,10 @@ export const api = {
     }
     
     let finalEndpoint = endpoint;
-        if (!endpoint.startsWith('/products') && !endpoint.startsWith('/auth') && !endpoint.startsWith('/api') && !endpoint.startsWith('/bookings')) {
+    if (!endpoint.startsWith('/products') && !endpoint.startsWith('/auth') && !endpoint.startsWith('/api') && !endpoint.startsWith('/bookings')) {
       finalEndpoint = `/api${endpoint}`;
     }
-        let url = `${ApiConfig.BASE_URL}${finalEndpoint}`;
+    let url = `${ApiConfig.BASE_URL}${finalEndpoint}`;
     
     if (params) {
       const queryParams = new URLSearchParams();
@@ -93,10 +75,10 @@ export const api = {
       console.log('Request headers:', headers);
     }
     let finalEndpoint = endpoint;
-        if (!endpoint.startsWith('/products') && !endpoint.startsWith('/auth') && !endpoint.startsWith('/api') && !endpoint.startsWith('/bookings')) {
+    if (!endpoint.startsWith('/products') && !endpoint.startsWith('/auth') && !endpoint.startsWith('/api') && !endpoint.startsWith('/bookings')) {
       finalEndpoint = `/api${endpoint}`;
     }
-        const url = `${ApiConfig.BASE_URL}${finalEndpoint}`;
+    let url = `${ApiConfig.BASE_URL}${finalEndpoint}`;
     
     const token = await AsyncStorage.getItem('userToken');
     
@@ -135,10 +117,10 @@ export const api = {
       console.log('Request headers:', headers);
     }
     let finalEndpoint = endpoint;
-        if (!endpoint.startsWith('/products') && !endpoint.startsWith('/auth') && !endpoint.startsWith('/api') && !endpoint.startsWith('/bookings')) {
+    if (!endpoint.startsWith('/products') && !endpoint.startsWith('/auth') && !endpoint.startsWith('/api') && !endpoint.startsWith('/bookings')) {
       finalEndpoint = `/api${endpoint}`;
     }
-        const url = `${ApiConfig.BASE_URL}${finalEndpoint}`;
+    let url = `${ApiConfig.BASE_URL}${finalEndpoint}`;
     
     const token = await AsyncStorage.getItem('userToken');
     
@@ -366,6 +348,60 @@ export const authService = {
       throw error;
     }
   }
-}; 
+  ,
+  async patch(endpoint: string, data: any, options: any = {}) {
+    let finalEndpoint = endpoint;
+    if (!endpoint.startsWith('/products') && !endpoint.startsWith('/auth') && !endpoint.startsWith('/api') && !endpoint.startsWith('/bookings')) {
+      finalEndpoint = `/api${endpoint}`;
+    }
+    let url = `${ApiConfig.BASE_URL}${finalEndpoint}`;
 
-export default authService; 
+    const token = await AsyncStorage.getItem('userToken');
+
+    try {
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        ...(options.headers || {})
+      };
+
+      const response = await fetch(url, {
+        method: 'PATCH',
+        headers,
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `API error: ${response.status}`);
+      }
+
+      const responseData = await response.json().catch(() => ({ success: true }));
+      return { data: responseData };
+    } catch (error: any) {
+      console.error(`API PATCH error (${finalEndpoint}):`, error.message);
+      throw error;
+    }
+  }
+};
+
+export { api };
+export default api;
+
+// export default authService; // Removed duplicate default export
+
+export const handleApiError = (error: any) => {
+  if (error.response) {
+    // The request was made and the server responded with a status code
+    console.error('API Error Response:', error.response.data);
+    return error.response.data.message || 'An error occurred';
+  } else if (error.request) {
+    // The request was made but no response was received
+    console.error('API Error Request:', error.request);
+    return 'No response from server. Please check your connection.';
+  } else {
+    // Something happened in setting up the request
+    console.error('API Error:', error.message);
+    return error.message || 'An unexpected error occurred';
+  }
+}; 

@@ -9,7 +9,7 @@ import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { getBestApiUrl } from '@/config/api.config';
 import { useAuth } from '@/contexts/AuthContext';
-import authService from '@/services/api';
+import { authService } from '../../services/auth.service';
 
 interface UserData {
   username: string;
@@ -184,7 +184,7 @@ export default function EditProfileScreen() {
       const updatedUserData = {
         ...userData,
         username: response.username,
-        email: response.email || userData?.email,
+        email: response.email ?? userData?.email ?? '',
         profileImage: formData.profilePhoto,
           profile: {
           ...userData?.profile,

@@ -1,6 +1,4 @@
-
-
-import { api } from './api';
+import { api, handleApiError } from './api';
 
 export interface User {
   id: string;
@@ -37,6 +35,6 @@ export const getUser = async (userId: string): Promise<User | null> => {
     return null;
   } catch (error) {
     console.error(`Error fetching user ${userId}:`, error);
-    return null;
+    throw new Error(handleApiError(error));
   }
 };
